@@ -1,10 +1,10 @@
-import { Home, List, Settings } from 'lucide-react'
+import { FolderKanban, LayoutDashboard, Settings } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
 const nav = [
-  { to: '/', label: 'Home', icon: Home },
-  { to: '/items', label: 'Items', icon: List },
+  { to: '/', label: 'Overview', icon: LayoutDashboard },
+  { to: '/projects', label: 'Projects', icon: FolderKanban },
   { to: '/settings', label: 'Settings', icon: Settings },
 ]
 
@@ -14,8 +14,8 @@ export function Layout() {
       <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-5xl items-center gap-6 px-6">
           <NavLink to="/" className="flex items-center gap-2 font-semibold">
-            <span className="grid size-7 place-items-center rounded-md bg-primary text-primary-foreground">S</span>
-            Starter
+            <span className="grid size-7 place-items-center rounded-md bg-primary text-primary-foreground">A</span>
+            Acme
           </NavLink>
           <nav className="flex items-center gap-1">
             {nav.map(({ to, label, icon: Icon }) => (

@@ -1,57 +1,76 @@
-import { ArrowRight, List, Settings } from 'lucide-react'
+import { ArrowRight, CheckCircle2, CircleAlert, FolderKanban } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { Progress } from '@/components/progress'
+import { StatusBadge } from '@/components/status-badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { activity, projects } from '@/data/projects'
 
 export default function Home() {
+  const open = projects.filter(project => project.status !== 'Done')
+  const stats = [
+    { label: 'Open projects', value: open.length, icon: FolderKanban },
+    { label: 'At risk', value: projects.filter(project => project.status === 'At risk').length, icon: CircleAlert },
+    { label: 'Done this quarter', value: projects.filter(project => project.status === 'Done').length, icon: CheckCircle2 },
+  ]
   return (
-    <div className="space-y-10">
-      <section className="space-y-4">
-        <h1 className="text-4xl font-semibold tracking-tight">Build something people can click.</h1>
-        <p className="max-w-2xl text-lg text-muted-foreground">
-          A small React app with Tailwind and shadcn/ui. Every page is a real route: change it, add new ones, and click through them.
-        </p>
-        <div className="flex gap-3">
-          <Button asChild>
-            <Link to="/items">
-              See the items <ArrowRight />
-            </Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link to="/settings">Settings</Link>
-          </Button>
+    <div className="space-y-8">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Good morning, Ava</h1>
+          <p className="text-sm text-muted-foreground">Here is where your team’s work stands today.</p>
         </div>
-      </section>
-      <section className="grid gap-4 sm:grid-cols-2">
-        <Card>
+        <Button asChild>
+          <Link to="/projects">
+            All projects <ArrowRight />
+          </Link>
+        </Button>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-3">
+        {stats.map(({ label, value, icon: Icon }) => (
+          <Card key={label} className="gap-2">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardDescription>{label}</CardDescription>
+              <Icon className="size-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent className="text-3xl font-semibold">{value}</CardContent>
+          </Card>
+        ))}
+      </div>
+      <div className="grid gap-4 lg:grid-cols-5">
+        <Card className="lg:col-span-3">
           <CardHeader>
-            <div className="mb-2 grid size-9 place-items-center rounded-md bg-secondary">
-              <List className="size-4" />
-            </div>
-            <CardTitle>A list</CardTitle>
-            <CardDescription>Search and filter a table of items.</CardDescription>
+            <CardTitle>In progress</CardTitle>
+            <CardDescription>Open projects, by due date.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <Button variant="link" className="px-0" asChild>
-              <Link to="/items">Open items</Link>
-            </Button>
+          <CardContent className="space-y-5">
+            {open.map(project => (
+              <Link key={project.id} to={`/projects/${project.id}`} className="block space-y-2 rounded-md hover:opacity-80">
+                <div className="flex items-center justify-between gap-3 text-sm">
+                  <span className="font-medium">{project.name}</span>
+                  <StatusBadge status={project.status} />
+                </div>
+                <Progress value={project.progress} />
+              </Link>
+            ))}
           </CardContent>
         </Card>
-        <Card>
+        <Card className="lg:col-span-2">
           <CardHeader>
-            <div className="mb-2 grid size-9 place-items-center rounded-md bg-secondary">
-              <Settings className="size-4" />
-            </div>
-            <CardTitle>A form</CardTitle>
-            <CardDescription>Inputs, switches and a save button.</CardDescription>
+            <CardTitle>Recent activity</CardTitle>
           </CardHeader>
-          <CardContent>
-            <Button variant="link" className="px-0" asChild>
-              <Link to="/settings">Open settings</Link>
-            </Button>
+          <CardContent className="space-y-4">
+            {activity.map(item => (
+              <div key={item.what} className="text-sm">
+                <p>
+                  <span className="font-medium">{item.who}</span> {item.what}
+                </p>
+                <p className="text-muted-foreground">{item.when}</p>
+              </div>
+            ))}
           </CardContent>
         </Card>
-      </section>
+      </div>
     </div>
   )
 }
